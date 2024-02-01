@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Image Cropping</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .slider-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        label {
+            margin-bottom: 0px;
+        }
+
+        input[type="range"] {
+            width: 200px;
+            margin-bottom: 0px;
+        }
+
+        #uploadedImage {
+            display: none;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <input type="file" id="fileInput">
+    <br>
+    <img src="" id="uploadedImage">
+    <canvas id="imageCanvas" style="max-width: 100%; max-height: 80vh; border: 1px solid black;"></canvas>
+    <br>
+    <div class="slider-container">
+        <label for="topLine">Top:</label>
+        <input type="range" id="topLine" min="0" max="100" value="0"><br>
+        <label for="bottomLine">Bottom:</label>
+        <input type="range" id="bottomLine" min="0" max="100" value="100"><br>
+        <label for="leftLine">Left:</label>
+        <input type="range" id="leftLine" min="0" max="100" value="0" orient="vertical"><br>
+        <label for="rightLine">Right:</label>
+        <input type="range" id="rightLine" min="0" max="100" value="100" orient="vertical"><br>
+    </div>
+    <button id="cropButton">Crop & Download</button>
+
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const uploadedImage = document.getElementById('uploadedImage');
+        const imageCanvas = document.getElementById('imageCanvas');
+        const ctx = imageCanvas.getContext('2d');
+        const topLine = document.getElementById('topLine');
+        const bottomLine = document.getElementById('bottomLine');
+        const leftLine = document.getElementById('leftLine');
+        const rightLine = document.getElementById('rightLine');
+        const cropButton = document.getElementById('cropButton');
+    
+        let img = new Image();
+    
+        fileInput.addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+    
+            reader.onload = function (event) {
+                img.onload = function () {
+                    imageCanvas.width = uploadedImage.width = img.width;
+                    imageCanvas.height = uploadedImage.height = img.height;
+                    ctx.clearRect(0, 0, imageCanvas.width, imageCanvas.height);
+                    ctx.drawImage(img, 0, 0);
+                    uploadedImage.style.display = 'none'; // Hide the image
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+
+        function drawLines() {
+            ctx.clearRect(0, 0, imageCanvas.width, imageCanvas.height);
+            ctx.drawImage(img, 0, 0);
+            
+            const topY = imageCanvas.height * parseFloat(topLine.value) / 100;
+            const bottomY = imageCanvas.height * parseFloat(bottomLine.value) / 100;
+            const leftX = imageCanvas.width * parseFloat(leftLine.value) / 100;
+            const rightX = imageCanvas.width * parseFloat(rightLine.value) / 100;
+
+            ctx.lineWidth = 8;
+
+            ctx.beginPath();
+            ctx.moveTo(leftX, topY);
+            ctx.lineTo(rightX, topY);
+            ctx.lineTo(rightX, bottomY);
+            ctx.lineTo(leftX, bottomY);
+            ctx.closePath();
+            ctx.strokeStyle = 'black';
+            ctx.stroke();
+        }
+
+        topLine.addEventListener('input', drawLines);
+        bottomLine.addEventListener('input', drawLines);
+        leftLine.addEventListener('input', drawLines);
+        rightLine.addEventListener('input', drawLines);
+
+        cropButton.addEventListener('click', function () {
+            const topY = imageCanvas.height * parseFloat(topLine.value) / 100;
+            const bottomY = imageCanvas.height * parseFloat(bottomLine.value) / 100;
+            const leftX = imageCanvas.width * parseFloat(leftLine.value) / 100;
+            const rightX = imageCanvas.width * parseFloat(rightLine.value) / 100;
+
+            const squareWidth = rightX - leftX;
+            const squareHeight = bottomY - topY;
+
+            const croppedCanvas = document.createElement('canvas');
+            const croppedCtx = croppedCanvas.getContext('2d');
+            croppedCanvas.width = squareWidth;
+            croppedCanvas.height = squareHeight;
+
+            croppedCtx.drawImage(img, leftX, topY, squareWidth, squareHeight, 0, 0, squareWidth, squareHeight);
+
+            const croppedImage = croppedCanvas.toDataURL();
+            
+            const downloadLink = document.createElement('a');
+            downloadLink.href = croppedImage;
+            downloadLink.download = 'cropped_image.png';
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+        });
+    </script>
+</body>
+</html>

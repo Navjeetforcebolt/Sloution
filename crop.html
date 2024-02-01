@@ -1,0 +1,86 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Image Cropping</title>
+    <style>
+        .container {
+            text-align: center;
+            margin-top: 50px;
+        }
+        img {
+            max-width: 500px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Image Cropping</h1>
+        <form action="/upload" method="post" enctype="multipart/form-data">
+            <input type="file" name="file" accept="image/*">
+            <br><br>
+            <select name="crop_ratio" id="crop_ratio">
+                <option value="4:3">4:3</option>
+                <option value="16:9">16:9</option>
+                <option value="5:4">5:4</option>
+
+            </select>
+            <br><br>
+            <input type="submit" value="Crop">
+        </form>
+        <br>
+        {% if cropped_image %}
+        <h2>Cropped Image</h2>
+        <img src="{{ cropped_image }}" alt="Cropped Image">
+        {% endif %}
+    </div>
+</body>
+</html> -->
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Image Cropping</title>
+    <style>
+        .container {
+            text-align: center;
+            margin-top: 50px;
+        }
+        img {
+            max-width: 500px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Image Cropping</h1>
+        <form action="/upload" method="post" enctype="multipart/form-data">
+            <input type="file" name="file" accept="image/*">
+            <br><br>
+            <select name="crop_ratio" id="crop_ratio">
+                <option value="4:3">4:3</option>
+                <option value="16:9">16:9</option>
+                <option value="5:4">5:4</option>
+                <!-- Add more ratio options -->
+            </select>
+            <br><br>
+            <input type="submit" value="Crop">
+        </form>
+        <br>
+        {% if cropped_image %}
+        <h2>Cropped Image</h2>
+        <img src="{{ cropped_image }}" alt="Cropped Image">
+        {% endif %}
+    </div>
+</body>
+</html>
